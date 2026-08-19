@@ -87,19 +87,35 @@ async function migrate() {
   const conn = await pool.connect();
   try {
     await conn.query('CREATE SCHEMA IF NOT EXISTS crm_app');
-    await conn.query(`CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL,
-      phone VARCHAR(20) UNIQUE NOT NULL,
-      pin_hash VARCHAR(255) NOT NULL,
-      role VARCHAR(20) DEFAULT 'USER',
-      avatar_color VARCHAR(20) DEFAULT '#6366f1',
-      active SMALLINT DEFAULT 1,
-      created_at TIMESTAMP DEFAULT NOW()
-    )`);
-    await conn.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)").catch(() => {});
-    await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
-    await conn.query("ALTER TABLE users DROP COLUMN IF EXISTS email CASCADE").catch(() => {});
+
+    const tableCheck = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'crm_app' AND table_name = 'users')");
+    const tableExists = tableCheck.rows[0].exists;
+
+    if (!tableExists) {
+      await conn.query(`CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        phone VARCHAR(20) UNIQUE NOT NULL,
+        pin_hash VARCHAR(255) NOT NULL,
+        role VARCHAR(20) DEFAULT 'USER',
+        avatar_color VARCHAR(20) DEFAULT '#6366f1',
+        active SMALLINT DEFAULT 1,
+        created_at TIMESTAMP DEFAULT NOW()
+      )`);
+    } else {
+      const colCheck = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'crm_app' AND table_name = 'users' AND column_name = 'phone')");
+      const hasPhone = colCheck.rows[0].exists;
+      if (!hasPhone) {
+        await conn.query("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
+        await conn.query("ALTER TABLE users ADD CONSTRAINT users_phone_unique UNIQUE (phone)").catch(() => {});
+        console.log('Added phone column to users');
+      }
+      const hasEmail = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'crm_app' AND table_name = 'users' AND column_name = 'email')");
+      if (hasEmail.rows[0].exists) {
+        await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
+        console.log('Updated existing admin phone to 22222222');
+      }
+    }
 
     await conn.query(`CREATE TABLE IF NOT EXISTS companies (
       id SERIAL PRIMARY KEY,
@@ -211,13 +227,21 @@ async function migrate() {
     const adminCheck = await conn.query("SELECT id FROM users WHERE phone = '22222222'");
     if (adminCheck.rows.length === 0) {
       const hash = await bcrypt.hash('2222', 10);
-      await conn.query(
-        "INSERT INTO users (name, phone, pin_hash, role) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
-        ['Admin', '22222222', hash, 'ADMIN']
-      );
+      try {
+        await conn.query(
+          "INSERT INTO users (name, phone, pin_hash, role) VALUES ($1, $2, $3, $4)",
+          ['Admin', '22222222', hash, 'ADMIN']
+        );
+      } catch (e) {
+        console.log('Insert admin error:', e.message);
+        await conn.query("UPDATE users SET phone = '22222222', pin_hash = $1, role = 'ADMIN' WHERE name = 'Admin'", [hash]);
+      }
+    } else {
+      const hash2 = await bcrypt.hash('2222', 10);
+      await conn.query("UPDATE users SET pin_hash = $1, role = 'ADMIN' WHERE phone = '22222222'", [hash2]);
+      console.log('Admin user password reset to 2222');
     }
-    const hash2 = await bcrypt.hash('2222', 10);
-    await conn.query("UPDATE users SET phone = '22222222', pin_hash = $1 WHERE name = 'Admin' AND phone != '22222222'", [hash2]).catch(() => {});
+    console.log('CRM Migration completed');
 
     const stageCheck = await conn.query('SELECT COUNT(*) AS c FROM deal_stages');
     if (Number(stageCheck.rows[0].c) === 0) {
