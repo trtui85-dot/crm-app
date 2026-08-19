@@ -717,6 +717,14 @@ a:hover { color: var(--primary-dark); }
 .settings-user-name { font-size: 20px; font-weight: 700; }
 .settings-user-email { font-size: 14px; color: var(--text-secondary); }
 .settings-user-role { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--primary); margin-top: 4px; font-weight: 600; }
+.settings-card-link { cursor: pointer; transition: all 0.2s; }
+.settings-card-link:hover { border-color: var(--primary-light); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.settings-link-row { display: flex; align-items: center; justify-content: space-between; }
+.settings-link-left { display: flex; align-items: center; gap: 16px; }
+.settings-link-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--primary-bg); color: var(--primary); display: flex; align-items: center; justify-content: center; }
+.settings-link-title { font-size: 16px; font-weight: 700; }
+.settings-link-sub { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.settings-link-arrow { color: var(--text-muted); }
 
 /* ==============================
     RESPONSIVE MOBILE FIRST

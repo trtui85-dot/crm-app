@@ -1,18 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
-import { Globe, User, Shield } from 'lucide-react';
+import { Globe, User, Shield, UserCog, ChevronRight } from 'lucide-react';
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
-
-  const toggleLang = () => {
-    const newLang = i18n.language === 'fr' ? 'ar' : 'fr';
-    i18n.changeLanguage(newLang);
-    localStorage.setItem('crm_lang', newLang);
-    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-  };
+  const navigate = useNavigate();
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <div className="page">
@@ -25,7 +21,7 @@ export default function Settings() {
           <h3><Globe size={18} /> {t('language')}</h3>
           <p className="settings-desc">Choisir la langue de l'interface</p>
           <div className="lang-options">
-            <button className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`} onClick={() => { i18n.changeLanguage('fr'); localStorage.setItem('crm_lang', 'fr'); }}>
+            <button className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`} onClick={() => { i18n.changeLanguage('fr'); localStorage.setItem('crm_lang', 'fr'); document.documentElement.dir = 'ltr'; }}>
               🇫🇷 Français
             </button>
             <button className={`lang-btn ${i18n.language === 'ar' ? 'active' : ''}`} onClick={() => { i18n.changeLanguage('ar'); localStorage.setItem('crm_lang', 'ar'); document.documentElement.dir = 'rtl'; }}>
@@ -47,6 +43,21 @@ export default function Settings() {
             </div>
           </div>
         </div>
+
+        {isAdmin && (
+          <div className="settings-card settings-card-link" onClick={() => navigate('/users')}>
+            <div className="settings-link-row">
+              <div className="settings-link-left">
+                <div className="settings-link-icon"><UserCog size={20} /></div>
+                <div>
+                  <div className="settings-link-title">{t('users_management')}</div>
+                  <div className="settings-link-sub">{t('add_user')} · {t('edit_user')}</div>
+                </div>
+              </div>
+              <ChevronRight size={18} className="settings-link-arrow" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
