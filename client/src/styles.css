@@ -683,12 +683,22 @@ a:hover { color: var(--primary-dark); }
   .dashboard-card { padding: 12px; border-radius: 8px; box-shadow: none; }
   .dashboard-card h3 { font-size: 12px; margin-bottom: 8px; gap: 6px; }
   .dashboard-card h3 svg { width: 14px; height: 14px; }
-  .pipeline-bar-header { font-size: 11px; }
+  .pipeline-bar-header { font-size: 10px; flex-direction: column; align-items: flex-start; gap: 2px; }
   .pipeline-bar-track { height: 6px; }
-  .deal-compact { padding: 8px; border-radius: 6px; }
+  .deal-compact { padding: 8px; border-radius: 6px; flex-wrap: wrap; gap: 4px; }
   .deal-compact-title { font-size: 11px; }
   .deal-compact-value { font-size: 10px; }
-  .deal-compact-contact { font-size: 10px; }
+  .deal-compact-contact { font-size: 9px; }
+  .deal-compact-right { gap: 6px; flex-wrap: wrap; }
+  .deal-compact-right .badge { font-size: 8px; padding: 2px 5px; }
+  .activity-compact { padding: 6px 8px; gap: 6px; flex-wrap: wrap; }
+  .activity-compact .badge { font-size: 8px; padding: 2px 5px; }
+  .activity-compact-info span:first-child { font-size: 11px; }
+  .activity-compact-sub { font-size: 9px; }
+  .activity-compact-date { font-size: 9px; }
+  .contact-stat-row { gap: 16px !important; }
+  .contact-stat-count { font-size: 22px !important; }
+  .contact-stat-label { font-size: 10px !important; }
 
   /* Contacts grid */
   .contacts-grid, .companies-grid { grid-template-columns: 1fr; gap: 6px; }
