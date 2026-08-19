@@ -613,52 +613,137 @@ a:hover { color: var(--primary-dark); }
 .settings-user-role { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--primary); margin-top: 4px; font-weight: 600; }
 
 /* ==============================
-   RESPONSIVE MOBILE FIRST
+    RESPONSIVE MOBILE FIRST
 ============================== */
 @media (max-width: 1024px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .dashboard-grid { grid-template-columns: 1fr; }
-  .contacts-grid, .companies-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .dashboard-grid { grid-template-columns: 1fr; gap: 14px; }
+  .contacts-grid, .companies-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 }
 
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); width: 280px; }
+  :root { --radius: 12px; --radius-sm: 10px; --radius-xs: 6px; }
+  .sidebar { transform: translateX(-100%); width: 260px; }
   .sidebar.open { transform: translateX(0); }
   .sidebar-close { display: block; }
   .sidebar-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); z-index: 99; }
   .main-content { margin-left: 0 !important; margin-right: 0 !important; }
   .menu-btn { display: flex; }
-  .topbar { padding: 0 16px; }
-  .page-content { padding: 16px; }
-  .page-header { flex-direction: column; gap: 12px; }
-  .page-header h1 { font-size: 22px; }
-  .header-actions { flex-direction: column; align-items: stretch; width: 100%; }
-  .page-filters { flex-direction: column; align-items: stretch; }
+  .topbar { padding: 0 12px; height: 56px; }
+  .page-content { padding: 12px; }
+  .page-header { flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .page-header h1 { font-size: 18px; font-weight: 700; }
+  .page-subtitle { font-size: 12px; }
+  .header-actions { flex-direction: column; align-items: stretch; width: 100%; gap: 8px; }
+  .page-filters { flex-direction: column; align-items: stretch; gap: 8px; }
   .search-input-wrapper { max-width: 100%; }
-  .tab-bar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
-  .detail-header { flex-direction: column; text-align: center; padding: 20px; }
-  .detail-header-info h1 { font-size: 20px; }
+  .search-input { padding: 10px 12px 10px 38px; font-size: 13px; }
+  .tab-bar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; gap: 2px; padding: 3px; }
+  .tab { padding: 6px 12px; font-size: 12px; }
+
+  /* Cards compact */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 12px; gap: 10px; border-radius: 12px; }
+  .stat-icon { width: 36px; height: 36px; border-radius: 10px; }
+  .stat-icon svg { width: 18px; height: 18px; }
+  .stat-value { font-size: 18px; font-weight: 800; }
+  .stat-label { font-size: 11px; }
+  .stat-sub { font-size: 10px; }
+
+  .dashboard-card { padding: 16px; border-radius: 12px; }
+  .dashboard-card h3 { font-size: 14px; margin-bottom: 12px; }
+
+  .contacts-grid, .companies-grid { grid-template-columns: 1fr; gap: 8px; }
+  .contact-card, .company-card { padding: 14px; border-radius: 12px; }
+  .contact-card-header { gap: 10px; margin-bottom: 10px; }
+  .contact-card-name { font-size: 14px; }
+  .contact-card-company { font-size: 11px; }
+  .contact-card-details { font-size: 12px; gap: 3px; margin-bottom: 8px; }
+  .company-card-header { gap: 10px; margin-bottom: 10px; }
+  .company-icon { width: 40px; height: 40px; border-radius: 10px; }
+  .company-card-name { font-size: 14px; }
+  .company-card-stats { gap: 12px; margin-bottom: 8px; }
+  .company-stat { font-size: 12px; }
+
+  .detail-header { flex-direction: column; text-align: center; padding: 16px; gap: 12px; border-radius: 12px; }
+  .detail-header-info h1 { font-size: 18px; }
+  .detail-header-info p { font-size: 12px; }
   .detail-badges { justify-content: center; }
   .detail-actions { justify-content: center; }
-  .detail-grid { grid-template-columns: 1fr; }
-  .contacts-grid, .companies-grid { grid-template-columns: 1fr; }
-  .pipeline-board { flex-direction: column; }
-  .pipeline-column { min-width: 100%; max-width: 100%; }
+  .detail-grid { grid-template-columns: 1fr; gap: 12px; }
+  .detail-card { padding: 16px; border-radius: 12px; }
+  .detail-card h3 { font-size: 14px; margin-bottom: 10px; }
+
+  .pipeline-board { flex-direction: column; min-height: auto; gap: 12px; }
+  .pipeline-column { min-width: 100%; max-width: 100%; border-radius: 12px; }
+  .pipeline-column-header { padding: 12px 14px; }
+  .pipeline-column-body { padding: 10px; gap: 8px; }
+  .pipeline-card { padding: 12px; border-radius: 10px; }
+  .pipeline-card-title { font-size: 13px; }
+  .pipeline-card-contact { font-size: 11px; }
+  .pipeline-card-value { font-size: 12px; }
+
   .form-grid { grid-template-columns: 1fr; }
-  .dashboard-grid { grid-template-columns: 1fr; }
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 12px; margin-bottom: 5px; }
+  .form-input, .form-select, .form-textarea { padding: 10px 12px; font-size: 13px; border-radius: 10px; }
+  .form-textarea { min-height: 72px; }
+
+  .activities-list { gap: 6px; }
+  .activity-item { padding: 12px; gap: 10px; border-radius: 10px; }
+  .activity-icon { width: 34px; height: 34px; border-radius: 8px; }
+  .activity-icon svg { width: 16px; height: 16px; }
+  .activity-subject { font-size: 13px; }
+  .activity-desc { font-size: 12px; }
+  .activity-check { width: 22px; height: 22px; }
+
+  .modal { border-radius: 14px; margin: 8px; max-height: 90vh; }
+  .modal-header { padding: 16px 18px 12px; }
+  .modal-header h3 { font-size: 16px; }
+  .modal-body { padding: 18px; }
+  .modal-actions { padding: 14px 18px; margin-top: 16px; }
+
   .settings-grid { grid-template-columns: 1fr; }
-  .stat-card { padding: 16px; }
-  .stat-icon { width: 44px; height: 44px; border-radius: 12px; }
-  .stat-value { font-size: 22px; }
+  .settings-card { padding: 18px; border-radius: 12px; }
+  .settings-card h3 { font-size: 15px; }
+  .lang-options { flex-direction: column; gap: 10px; }
+  .lang-btn { padding: 14px 18px; font-size: 14px; }
+
+  .deal-compact { padding: 10px 12px; }
+  .deal-compact-title { font-size: 13px; }
+  .deal-compact-value { font-size: 12px; }
+  .activity-compact { padding: 8px 10px; }
+  .activity-compact span:first-child { font-size: 12px; }
+
+  .btn { padding: 10px 16px; font-size: 13px; border-radius: 10px; gap: 6px; }
+  .btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 8px; }
+  .btn-back { font-size: 13px; margin-bottom: 14px; }
+
+  .toast-container { top: 14px; right: 14px; left: 14px; }
+  .toast { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
 }
 
 @media (max-width: 480px) {
-  .stats-grid { grid-template-columns: 1fr; }
-  .login-card { padding: 36px 24px; }
-  .login-logo-img { width: 64px; height: 64px; }
-  .pin-box { width: 48px; height: 52px; font-size: 20px; }
-  .btn { padding: 12px 20px; }
-  .modal { border-radius: 16px; margin: 10px; }
-  .modal-header, .modal-body { padding: 20px; }
-  .lang-options { flex-direction: column; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-card { padding: 10px; gap: 8px; }
+  .stat-icon { width: 32px; height: 32px; border-radius: 8px; }
+  .stat-icon svg { width: 16px; height: 16px; }
+  .stat-value { font-size: 16px; }
+  .stat-label { font-size: 10px; }
+
+  .login-logo-img { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 12px; }
+  .login-title { font-size: 22px; }
+  .login-subtitle { font-size: 12px; margin-bottom: 24px; }
+  .login-field { padding: 12px 14px; gap: 10px; border-radius: 12px; }
+  .login-input { font-size: 15px; }
+  .pin-inputs { gap: 8px; }
+  .pin-box { width: 44px; height: 48px; font-size: 18px; border-radius: 10px; }
+  .btn-login { padding: 12px 20px; font-size: 14px; border-radius: 12px; }
+
+  .contact-card-header { gap: 8px; }
+  .user-avatar { width: 32px; height: 32px; font-size: 12px; border-radius: 10px; }
+  .company-icon { width: 36px; height: 36px; font-size: 14px; }
+  .page-header h1 { font-size: 16px; }
+  .sidebar-logo-text { font-size: 17px; }
+  .nav-item { padding: 9px 14px; font-size: 13px; }
 }

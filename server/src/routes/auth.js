@@ -8,25 +8,17 @@ const router = Router();
 router.post('/login', async (req, res) => {
   try {
     const { phone, pin } = req.body;
-    console.log('LOGIN ATTEMPT:', { phone, pin });
     if (!phone || !pin) return res.status(400).json({ error: 'Téléphone et code PIN requis' });
     const [users] = await query("SELECT * FROM users WHERE phone = ? AND active = 1", [phone]);
-    console.log('USERS FOUND:', users.length, users.map(u => ({ id: u.id, name: u.name, phone: u.phone, role: u.role, active: u.active })));
-    if (users.length === 0) {
-      const [allUsers] = await query("SELECT id, name, phone, role, active FROM users");
-      console.log('ALL USERS:', JSON.stringify(allUsers));
-      return res.status(401).json({ error: 'Identifiants incorrects' });
-    }
+    if (users.length === 0) return res.status(401).json({ error: 'Identifiants incorrects' });
     const user = users[0];
-    console.log('PIN HASH:', user.pin_hash);
     const valid = await bcrypt.compare(pin, user.pin_hash);
-    console.log('PIN VALID:', valid);
     if (!valid) return res.status(401).json({ error: 'Identifiants incorrects' });
     const token = generateToken(user);
     const { pin_hash, ...safeUser } = user;
     res.json({ token, user: safeUser });
   } catch (err) {
-    console.error('LOGIN ERROR:', err);
+    console.error('LOGIN ERROR:', err.message);
     res.status(500).json({ error: 'Server error' });
   }
 });
