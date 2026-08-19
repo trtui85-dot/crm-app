@@ -90,13 +90,16 @@ async function migrate() {
     await conn.query(`CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
-      email VARCHAR(150) UNIQUE NOT NULL,
+      phone VARCHAR(20) UNIQUE NOT NULL,
       pin_hash VARCHAR(255) NOT NULL,
       role VARCHAR(20) DEFAULT 'USER',
       avatar_color VARCHAR(20) DEFAULT '#6366f1',
       active SMALLINT DEFAULT 1,
       created_at TIMESTAMP DEFAULT NOW()
     )`);
+    await conn.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)").catch(() => {});
+    await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
+    await conn.query("ALTER TABLE users DROP COLUMN IF EXISTS email CASCADE").catch(() => {});
 
     await conn.query(`CREATE TABLE IF NOT EXISTS companies (
       id SERIAL PRIMARY KEY,
@@ -205,14 +208,16 @@ async function migrate() {
       updated_at TIMESTAMP DEFAULT NOW()
     )`);
 
-    const adminCheck = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com'");
+    const adminCheck = await conn.query("SELECT id FROM users WHERE phone = '22222222'");
     if (adminCheck.rows.length === 0) {
       const hash = await bcrypt.hash('2222', 10);
       await conn.query(
-        "INSERT INTO users (name, email, pin_hash, role) VALUES ($1, $2, $3, $4)",
-        ['Admin', 'admin@crm.com', hash, 'ADMIN']
+        "INSERT INTO users (name, phone, pin_hash, role) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
+        ['Admin', '22222222', hash, 'ADMIN']
       );
     }
+    const hash2 = await bcrypt.hash('2222', 10);
+    await conn.query("UPDATE users SET phone = '22222222', pin_hash = $1 WHERE name = 'Admin' AND phone != '22222222'", [hash2]).catch(() => {});
 
     const stageCheck = await conn.query('SELECT COUNT(*) AS c FROM deal_stages');
     if (Number(stageCheck.rows[0].c) === 0) {
@@ -241,7 +246,7 @@ async function migrate() {
 
     const compCheck = await conn.query('SELECT COUNT(*) AS c FROM companies');
     if (Number(compCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com' LIMIT 1");
+      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       await conn.query(`INSERT INTO companies (name, industry, website, phone, email, address, city, country, size, annual_revenue, owner_id) VALUES
         ('SIR Solutions', 'Informatique', 'https://siir.mr', '22567890', 'contact@siir.mr', 'Tevragh Zeina', 'Nouakchott', 'Mauritanie', 'PME', 50000000, $1),
@@ -259,7 +264,7 @@ async function migrate() {
 
     const contCheck = await conn.query('SELECT COUNT(*) AS c FROM contacts');
     if (Number(contCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com' LIMIT 1");
+      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [comps] = await conn.query('SELECT id, name FROM companies ORDER BY id');
 
@@ -304,7 +309,7 @@ async function migrate() {
 
     const dealCheck = await conn.query('SELECT COUNT(*) AS c FROM deals');
     if (Number(dealCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com' LIMIT 1");
+      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [stages] = await conn.query('SELECT id, name FROM deal_stages ORDER BY position');
       const [contacts] = await conn.query('SELECT id, company_id FROM contacts ORDER BY id');
@@ -349,7 +354,7 @@ async function migrate() {
 
     const actCheck = await conn.query('SELECT COUNT(*) AS c FROM activities');
     if (Number(actCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com' LIMIT 1");
+      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
       const [deals] = await conn.query('SELECT id FROM deals ORDER BY id');
@@ -380,7 +385,7 @@ async function migrate() {
 
     const noteCheck = await conn.query('SELECT COUNT(*) AS c FROM notes');
     if (Number(noteCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE email = 'admin@crm.com' LIMIT 1");
+      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
 

@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth.jsx';
-import { Lock, Mail, Globe, Users, ArrowRight } from 'lucide-react';
+import { Phone, ArrowRight, Globe } from 'lucide-react';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
   const { login, loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [pin, setPin] = useState('');
+  const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState(['', '', '', '']);
   const [error, setError] = useState('');
+  const pinRefs = [useRef(), useRef(), useRef(), useRef()];
 
   const toggleLang = () => {
     const newLang = i18n.language === 'fr' ? 'ar' : 'fr';
@@ -16,65 +17,121 @@ export default function Login() {
     localStorage.setItem('crm_lang', newLang);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    if (!email || !pin) { setError('Veuillez remplir tous les champs'); return; }
-    try {
-      await login(email, pin);
-    } catch {
-      setError('Identifiants incorrects');
+  const handlePhoneChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 8);
+    setPhone(val);
+  };
+
+  const handlePinChange = (idx, val) => {
+    if (!/^\d*$/.test(val)) return;
+    const newPin = [...pin];
+    newPin[idx] = val.slice(-1);
+    setPin(newPin);
+    if (val && idx < 3) pinRefs[idx + 1].current?.focus();
+    if (val && idx === 3) {
+      const pinStr = newPin.join('');
+      if (phone.length === 8 && pinStr.length === 4) {
+        doLogin(phone, pinStr);
+      }
     }
+  };
+
+  const handlePinKeyDown = (idx, e) => {
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0) {
+      pinRefs[idx - 1].current?.focus();
+    }
+  };
+
+  const handlePinPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    if (pasted) {
+      const newPin = pasted.split('').concat(['','','','']).slice(0, 4);
+      setPin(newPin);
+      const focusIdx = Math.min(pasted.length, 3);
+      pinRefs[focusIdx].current?.focus();
+      if (pasted.length === 4 && phone.length === 8) {
+        doLogin(phone, pasted);
+      }
+    }
+  };
+
+  const doLogin = async (ph, pi) => {
+    setError('');
+    try {
+      await login(ph, pi);
+    } catch {
+      setError('Numéro ou code PIN incorrect');
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const pinStr = pin.join('');
+    if (phone.length !== 8) { setError('Le numéro doit contenir 8 chiffres'); return; }
+    if (pinStr.length !== 4) { setError('Le code PIN doit contenir 4 chiffres'); return; }
+    doLogin(phone, pinStr);
   };
 
   return (
     <div className="login-page">
-      <div className="login-shapes">
-        <div className="login-shape shape-1" />
-        <div className="login-shape shape-2" />
-        <div className="login-shape shape-3" />
+      <div className="login-bg">
+        <div className="login-blob blob-1" />
+        <div className="login-blob blob-2" />
+        <div className="login-blob blob-3" />
       </div>
       <div className="login-card">
-        <div className="login-header">
-          <div className="login-logo">CRM</div>
-          <div className="login-logo-sub">SIR Solutions</div>
-          <h1>{t('login_title')}</h1>
-          <p>{t('login_subtitle')}</p>
+        <div className="login-logo-wrap">
+          <img src="/logo-512.png" alt="CRM" className="login-logo-img" />
         </div>
+        <h1 className="login-title">{t('login_title')}</h1>
+        <p className="login-subtitle">{t('login_subtitle')}</p>
+
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="login-error">{error}</div>}
+
           <div className="form-group">
-            <label className="form-label">{t('email_address')}</label>
+            <label className="form-label">{t('phone')}</label>
             <div className="input-with-icon">
-              <Mail size={18} />
+              <Phone size={18} />
               <input
-                type="email"
+                type="tel"
+                inputMode="numeric"
                 className="form-input"
-                placeholder="admin@crm.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                placeholder="22222222"
+                value={phone}
+                onChange={handlePhoneChange}
+                maxLength={8}
                 autoFocus
               />
             </div>
           </div>
+
           <div className="form-group">
             <label className="form-label">{t('pin')}</label>
-            <div className="input-with-icon">
-              <Lock size={18} />
-              <input
-                type="password"
-                className="form-input"
-                placeholder="••••"
-                value={pin}
-                onChange={e => setPin(e.target.value)}
-                maxLength={8}
-              />
+            <div className="pin-inputs">
+              {pin.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={pinRefs[idx]}
+                  type="password"
+                  inputMode="numeric"
+                  className="pin-box"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handlePinChange(idx, e.target.value)}
+                  onKeyDown={(e) => handlePinKeyDown(idx, e)}
+                  onPaste={handlePinPaste}
+                />
+              ))}
             </div>
           </div>
-          <button type="submit" className="btn btn-primary btn-full btn-glow" disabled={loading}>
-            {loading ? t('loading') : t('login')} {!loading && <ArrowRight size={18} />}
+
+          <button type="submit" className="btn btn-primary btn-full btn-login" disabled={loading}>
+            {loading ? <span className="spinner-sm" /> : <>{t('login')} <ArrowRight size={18} /></>}
           </button>
         </form>
+
         <button className="lang-toggle" onClick={toggleLang}>
           <Globe size={16} /> {i18n.language === 'fr' ? 'العربية' : 'Français'}
         </button>

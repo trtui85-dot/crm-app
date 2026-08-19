@@ -38,7 +38,8 @@ export default function Layout() {
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
             <div className="logo">
-              <div className="logo-icon">CRM</div>
+              <img src="/logo-192.png" alt="CRM" className="sidebar-logo-img" />
+              <span className="sidebar-logo-text">CRM</span>
             </div>
             <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>
               <X size={20} />
@@ -65,7 +66,7 @@ export default function Layout() {
               </div>
               <div className="user-details">
                 <div className="user-name">{user?.name}</div>
-                <div className="user-role">{user?.role}</div>
+                <div className="user-role">{user?.phone}</div>
               </div>
             </div>
             <div className="sidebar-actions">

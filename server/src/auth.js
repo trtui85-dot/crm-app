@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'crm-secret-key-2026';
 
 export function generateToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, role: user.role, name: user.name },
+    { id: user.id, phone: user.phone, role: user.role, name: user.name },
     JWT_SECRET,
     { expiresIn: '24h' }
   );

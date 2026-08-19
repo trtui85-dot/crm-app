@@ -42,7 +42,7 @@ export default function Settings() {
             </div>
             <div>
               <div className="settings-user-name">{user?.name}</div>
-              <div className="settings-user-email">{user?.email}</div>
+              <div className="settings-user-email">{user?.phone}</div>
               <div className="settings-user-role"><Shield size={14} /> {user?.role}</div>
             </div>
           </div>
