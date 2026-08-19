@@ -44,9 +44,8 @@ function expandArrayParams(sql, params) {
 function isInsert(sql) { return /^\s*INSERT\s+INTO/i.test(sql); }
 
 async function execQuery(sql, params = []) {
-  const converted = convertPlaceholders(sql);
-  const { sql: pgSql, params: pgParams } = expandArrayParams(converted, params);
-  if (isInsert(converted) && !converted.toLowerCase().includes('returning')) {
+  const { sql: pgSql, params: pgParams } = expandArrayParams(sql, params);
+  if (isInsert(sql) && !sql.toLowerCase().includes('returning')) {
     const withReturning = pgSql.replace(/;?\s*$/, '') + ' RETURNING *';
     const result = await pool.query(withReturning, pgParams);
     return [result.rows, [{ insertId: result.rows[0]?.id, affectedRows: result.rowCount }]];
@@ -299,7 +298,7 @@ async function migrate() {
     if (Number(contCheck.rows[0].c) === 0) {
       const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
-      const [comps] = await conn.query('SELECT id, name FROM companies ORDER BY id');
+      const comps = await conn.query('SELECT id, name FROM companies ORDER BY id');
 
       const contacts = [
         ['Ahmed', 'Ould Abdallahi', 'ahmed@sir.mr', '22100101', 'Directeur Général', 'SIR Solutions', 'owner'],
@@ -344,8 +343,8 @@ async function migrate() {
     if (Number(dealCheck.rows[0].c) === 0) {
       const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
-      const [stages] = await conn.query('SELECT id, name FROM deal_stages ORDER BY position');
-      const [contacts] = await conn.query('SELECT id, company_id FROM contacts ORDER BY id');
+      const stages = await conn.query('SELECT id, name FROM deal_stages ORDER BY position');
+      const contacts = await conn.query('SELECT id, company_id FROM contacts ORDER BY id');
 
       const deals = [
         ['Refonte site web SIR', 0, 15000000, 70, 14],
@@ -389,8 +388,8 @@ async function migrate() {
     if (Number(actCheck.rows[0].c) === 0) {
       const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
-      const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
-      const [deals] = await conn.query('SELECT id FROM deals ORDER BY id');
+      const contacts = await conn.query('SELECT id FROM contacts ORDER BY id');
+      const deals = await conn.query('SELECT id FROM deals ORDER BY id');
 
       const activities = [
         ['call', 'Appel de suivi - Ahmed', 'Discuter de la refsite web', 1, 1],
@@ -420,7 +419,7 @@ async function migrate() {
     if (Number(noteCheck.rows[0].c) === 0) {
       const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
-      const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
+      const contacts = await conn.query('SELECT id FROM contacts ORDER BY id');
 
       await conn.query(
         `INSERT INTO notes (content, contact_id, author_id) VALUES ($1, $2, $3)`,
