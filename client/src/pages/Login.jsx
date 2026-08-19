@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth.jsx';
 import { Phone, ArrowRight, Globe } from 'lucide-react';
@@ -30,16 +30,12 @@ export default function Login() {
     if (val && idx < 3) pinRefs[idx + 1].current?.focus();
     if (val && idx === 3) {
       const pinStr = newPin.join('');
-      if (phone.length === 8 && pinStr.length === 4) {
-        doLogin(phone, pinStr);
-      }
+      if (phone.length === 8 && pinStr.length === 4) doLogin(phone, pinStr);
     }
   };
 
   const handlePinKeyDown = (idx, e) => {
-    if (e.key === 'Backspace' && !pin[idx] && idx > 0) {
-      pinRefs[idx - 1].current?.focus();
-    }
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0) pinRefs[idx - 1].current?.focus();
   };
 
   const handlePinPaste = (e) => {
@@ -48,21 +44,15 @@ export default function Login() {
     if (pasted) {
       const newPin = pasted.split('').concat(['','','','']).slice(0, 4);
       setPin(newPin);
-      const focusIdx = Math.min(pasted.length, 3);
-      pinRefs[focusIdx].current?.focus();
-      if (pasted.length === 4 && phone.length === 8) {
-        doLogin(phone, pasted);
-      }
+      pinRefs[Math.min(pasted.length, 3)].current?.focus();
+      if (pasted.length === 4 && phone.length === 8) doLogin(phone, pasted);
     }
   };
 
   const doLogin = async (ph, pi) => {
     setError('');
-    try {
-      await login(ph, pi);
-    } catch {
-      setError('Numéro ou code PIN incorrect');
-    }
+    try { await login(ph, pi); }
+    catch { setError('Numéro ou code PIN incorrect'); }
   };
 
   const handleSubmit = (e) => {
@@ -75,56 +65,36 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-bg">
-        <div className="login-blob blob-1" />
-        <div className="login-blob blob-2" />
-        <div className="login-blob blob-3" />
-      </div>
-      <div className="login-card">
-        <div className="login-logo-wrap">
-          <img src="/logo-512.png" alt="CRM" className="login-logo-img" />
-        </div>
-        <h1 className="login-title">{t('login_title')}</h1>
+      <div className="login-center">
+        <img src="/logo-512.png" alt="CRM" className="login-logo-img" />
+        <h1 className="login-title">CRM</h1>
         <p className="login-subtitle">{t('login_subtitle')}</p>
 
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="login-error">{error}</div>}
 
-          <div className="form-group">
-            <label className="form-label">{t('phone')}</label>
-            <div className="input-with-icon">
-              <Phone size={18} />
-              <input
-                type="tel"
-                inputMode="numeric"
-                className="form-input"
-                placeholder="22222222"
-                value={phone}
-                onChange={handlePhoneChange}
-                maxLength={8}
-                autoFocus
-              />
-            </div>
+          <div className="login-field">
+            <Phone size={18} className="login-field-icon" />
+            <input
+              type="tel" inputMode="numeric"
+              placeholder={t('phone')}
+              value={phone} onChange={handlePhoneChange}
+              maxLength={8} autoFocus className="login-input"
+            />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">{t('pin')}</label>
-            <div className="pin-inputs">
-              {pin.map((digit, idx) => (
-                <input
-                  key={idx}
-                  ref={pinRefs[idx]}
-                  type="password"
-                  inputMode="numeric"
-                  className="pin-box"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handlePinChange(idx, e.target.value)}
-                  onKeyDown={(e) => handlePinKeyDown(idx, e)}
-                  onPaste={handlePinPaste}
-                />
-              ))}
-            </div>
+          <div className="pin-inputs">
+            {pin.map((digit, idx) => (
+              <input
+                key={idx} ref={pinRefs[idx]}
+                type="password" inputMode="numeric"
+                className="pin-box" maxLength={1}
+                value={digit}
+                onChange={(e) => handlePinChange(idx, e.target.value)}
+                onKeyDown={(e) => handlePinKeyDown(idx, e)}
+                onPaste={handlePinPaste}
+              />
+            ))}
           </div>
 
           <button type="submit" className="btn btn-primary btn-full btn-login" disabled={loading}>

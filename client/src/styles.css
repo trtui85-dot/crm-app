@@ -75,59 +75,54 @@ a:hover { color: var(--primary-dark); }
 ============================== */
 .login-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, #f8fafc 0%, #eef2ff 40%, #f0f9ff 70%, #f8fafc 100%);
-  padding: 20px; position: relative; overflow: hidden;
+  background: var(--bg); padding: 20px;
 }
-.login-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
-.login-blob { position: absolute; border-radius: 50%; filter: blur(80px); }
-.blob-1 { width: 500px; height: 500px; top: -150px; right: -100px; background: rgba(99,102,241,0.08); animation: float 10s ease-in-out infinite; }
-.blob-2 { width: 400px; height: 400px; bottom: -100px; left: -80px; background: rgba(16,185,129,0.06); animation: float 12s ease-in-out infinite reverse; }
-.blob-3 { width: 300px; height: 300px; top: 30%; left: 40%; background: rgba(245,158,11,0.05); animation: float 14s ease-in-out infinite 3s; }
-.login-card {
-  background: #fff; border: 1px solid var(--border); border-radius: 24px;
-  padding: 48px 40px; width: 100%; max-width: 420px;
-  box-shadow: 0 24px 48px rgba(0,0,0,0.06);
-  text-align: center; position: relative; z-index: 1;
-  animation: scaleIn 0.4s ease;
+.login-center {
+  width: 100%; max-width: 380px; text-align: center;
+  animation: fadeInUp 0.4s ease;
 }
-.login-logo-wrap { margin-bottom: 20px; }
-.login-logo-img { width: 80px; height: 80px; border-radius: 20px; box-shadow: 0 8px 24px rgba(99,102,241,0.15); }
-.login-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.3px; }
+.login-logo-img { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 16px; }
+.login-title { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .login-subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
 .login-form { text-align: left; }
 .login-error {
   background: var(--danger-bg); color: var(--danger); padding: 12px 16px;
-  border-radius: 12px; font-size: 13px; margin-bottom: 16px; border: 1px solid #fecaca;
+  border-radius: 12px; font-size: 13px; margin-bottom: 20px; border: 1px solid #fecaca;
   font-weight: 500;
 }
-.input-with-icon { position: relative; }
-.input-with-icon svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); z-index: 1; }
-.input-with-icon input { padding-left: 44px !important; }
-
-/* PIN boxes */
-.pin-inputs { display: flex; gap: 10px; justify-content: center; }
+.login-field {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; background: #fff; border: 1.5px solid var(--border);
+  border-radius: 14px; margin-bottom: 16px; transition: all 0.2s;
+}
+.login-field:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+.login-field-icon { color: var(--text-muted); flex-shrink: 0; }
+.login-input {
+  flex: 1; border: none; outline: none; font-size: 16px; font-family: inherit;
+  color: var(--text); background: transparent; font-weight: 500;
+}
+.login-input::placeholder { color: var(--text-muted); font-weight: 400; }
+.pin-inputs { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
 .pin-box {
-  width: 56px; height: 60px; text-align: center; font-size: 24px; font-weight: 700;
-  border: 2px solid var(--border); border-radius: 14px; background: var(--bg);
+  width: 56px; height: 60px; text-align: center; font-size: 22px; font-weight: 700;
+  border: 1.5px solid var(--border); border-radius: 14px; background: #fff;
   color: var(--text); outline: none; transition: all 0.2s; font-family: inherit;
   caret-color: var(--primary);
 }
-.pin-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); background: #fff; }
+.pin-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
 .spinner-sm {
   width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3);
   border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;
   display: inline-block;
 }
-.btn-login {
-  margin-top: 8px; padding: 14px 24px; font-size: 15px; border-radius: 14px;
-}
+.btn-login { margin-bottom: 16px; padding: 14px 24px; font-size: 15px; border-radius: 14px; }
 .lang-toggle {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 24px;
-  background: none; border: 1px solid var(--border); border-radius: 12px;
-  padding: 10px 20px; color: var(--text-secondary); cursor: pointer;
-  font-size: 13px; font-weight: 500; transition: all 0.2s; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 10px 20px;
+  color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: color 0.15s; font-family: inherit;
 }
-.lang-toggle:hover { background: var(--bg); border-color: var(--border-focus); }
+.lang-toggle:hover { color: var(--primary); }
 
 /* ==============================
    LAYOUT
