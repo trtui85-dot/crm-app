@@ -2,12 +2,13 @@ import pg from 'pg';
 import bcrypt from 'bcryptjs';
 const { Pool } = pg;
 
-const DB_URL = process.env.DATABASE_URL || 'postgresql://factory_manager_user:apDO6DzshNP0oLCKmACPunlg53BX0W97@dpg-da2crt15efls73a0lhn0-a/crm_app';
+const DB_URL = process.env.DATABASE_URL || 'postgresql://factory_manager_user:apDO6DzshNP0oLCKmACPunlg53BX0W97@dpg-da2crt15efls73a0lhn0-a/factory_manager';
 
 const pool = new Pool({
   connectionString: DB_URL,
   ssl: { rejectUnauthorized: false },
   max: 10,
+  options: '-c search_path=crm_app,public',
 });
 
 function convertPlaceholders(sql) {
@@ -85,6 +86,7 @@ export const query = execQuery;
 async function migrate() {
   const conn = await pool.connect();
   try {
+    await conn.query('CREATE SCHEMA IF NOT EXISTS crm_app');
     await conn.query(`CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
