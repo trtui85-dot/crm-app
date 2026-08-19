@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { Modal, Input, Select, Textarea, Badge, Spinner, EmptyState, SearchInput, TabBar } from '../components/ui.jsx';
 import { Plus, GitBranch, DollarSign, GripVertical } from 'lucide-react';
 
 export default function Pipeline() {
   const { t } = useTranslation();
   const toast = useToast();
+  const confirm = useConfirm();
   const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -46,7 +48,8 @@ export default function Pipeline() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm(t('confirm_delete'))) return;
+    const ok = await confirm({ title: t('delete'), message: t('confirm_delete'), type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try { await del(`/api/deals/${id}`); toast.success(t('delete') + ' ✓'); load(); } catch (e) { toast.error(e.message); }
   };
 

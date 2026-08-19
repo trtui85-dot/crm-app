@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { SearchInput, Modal, Input, Select, Textarea, Spinner, EmptyState } from '../components/ui.jsx';
 import { Plus, Building2, Users, DollarSign, Globe } from 'lucide-react';
 
 export default function Companies() {
   const { t } = useTranslation();
   const toast = useToast();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const [companies, setCompanies] = useState([]);
   const [search, setSearch] = useState('');
@@ -40,7 +42,8 @@ export default function Companies() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm(t('confirm_delete'))) return;
+    const ok = await confirm({ title: t('delete'), message: t('confirm_delete'), type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try { await del(`/api/companies/${id}`); toast.success(t('delete') + ' ✓'); load(); } catch (e) { toast.error(e.message); }
   };
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { Spinner, Badge, Avatar, Modal, Input, Select, Textarea } from '../components/ui.jsx';
 import { ArrowLeft, Phone, Mail, Building2, Calendar, Tag, FileText, Edit, Trash2 } from 'lucide-react';
 
@@ -10,6 +11,7 @@ export default function ContactDetail() {
   const { id } = useParams();
   const { t } = useTranslation();
   const toast = useToast();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const [contact, setContact] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,8 @@ export default function ContactDetail() {
   };
 
   const handleDelete = async () => {
-    if (!confirm(t('confirm_delete'))) return;
+    const ok = await confirm({ title: t('delete'), message: t('confirm_delete'), type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try { await del(`/api/contacts/${id}`); toast.success(t('delete') + ' ✓'); navigate('/contacts'); } catch (e) { toast.error(e.message); }
   };
 

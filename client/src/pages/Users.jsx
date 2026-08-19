@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useAuth } from '../auth.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { Spinner } from '../components/ui.jsx';
 import {
   UserPlus, Shield, ShieldOff, Trash2, Edit3, Eye, EyeOff, X, Check
@@ -12,6 +13,7 @@ const ALL_PAGES = ['dashboard', 'contacts', 'companies', 'pipeline', 'activities
 export default function Users() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const confirm = useConfirm();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -92,7 +94,8 @@ export default function Users() {
   };
 
   const deleteUser = async (u) => {
-    if (!confirm(`Supprimer ${u.name} ?`)) return;
+    const ok = await confirm({ title: t('delete'), message: `Supprimer ${u.name} ?`, type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try {
       await del(`/api/users/${u.id}`);
       load();

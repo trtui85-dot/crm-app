@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { SearchInput, Modal, Input, Select, Textarea, Badge, Spinner, EmptyState, TabBar } from '../components/ui.jsx';
 import { Plus, CalendarCheck, Phone, Mail, CheckSquare, Users } from 'lucide-react';
 
 export default function Activities() {
   const { t } = useTranslation();
   const toast = useToast();
+  const confirm = useConfirm();
   const [activities, setActivities] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [deals, setDeals] = useState([]);
@@ -49,7 +51,8 @@ export default function Activities() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm(t('confirm_delete'))) return;
+    const ok = await confirm({ title: t('delete'), message: t('confirm_delete'), type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try { await del(`/api/activities/${id}`); toast.success(t('delete') + ' ✓'); load(); } catch (e) { toast.error(e.message); }
   };
 

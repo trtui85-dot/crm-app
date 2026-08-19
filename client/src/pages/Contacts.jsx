@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
+import { useConfirm } from '../components/confirm.jsx';
 import { SearchInput, Badge, Avatar, Modal, Input, Select, Spinner, EmptyState, TabBar } from '../components/ui.jsx';
 import { Plus, Users, Phone, Mail } from 'lucide-react';
 
 export default function Contacts() {
   const { t } = useTranslation();
   const toast = useToast();
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -48,7 +50,8 @@ export default function Contacts() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm(t('confirm_delete'))) return;
+    const ok = await confirm({ title: t('delete'), message: t('confirm_delete'), type: 'danger', confirmText: t('delete'), cancelText: t('cancel') });
+    if (!ok) return;
     try { await del(`/api/contacts/${id}`); toast.success(t('delete') + ' ✓'); load(); } catch (e) { toast.error(e.message); }
   };
 
