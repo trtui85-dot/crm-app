@@ -279,7 +279,7 @@ async function migrate() {
 
     const compCheck = await conn.query('SELECT COUNT(*) AS c FROM companies');
     if (Number(compCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
+      const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       await conn.query(`INSERT INTO companies (name, industry, website, phone, email, address, city, country, size, annual_revenue, owner_id) VALUES
         ('SIR Solutions', 'Informatique', 'https://siir.mr', '22567890', 'contact@siir.mr', 'Tevragh Zeina', 'Nouakchott', 'Mauritanie', 'PME', 50000000, $1),
@@ -297,7 +297,7 @@ async function migrate() {
 
     const contCheck = await conn.query('SELECT COUNT(*) AS c FROM contacts');
     if (Number(contCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
+      const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [comps] = await conn.query('SELECT id, name FROM companies ORDER BY id');
 
@@ -342,7 +342,7 @@ async function migrate() {
 
     const dealCheck = await conn.query('SELECT COUNT(*) AS c FROM deals');
     if (Number(dealCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
+      const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [stages] = await conn.query('SELECT id, name FROM deal_stages ORDER BY position');
       const [contacts] = await conn.query('SELECT id, company_id FROM contacts ORDER BY id');
@@ -387,7 +387,7 @@ async function migrate() {
 
     const actCheck = await conn.query('SELECT COUNT(*) AS c FROM activities');
     if (Number(actCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
+      const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
       const [deals] = await conn.query('SELECT id FROM deals ORDER BY id');
@@ -418,7 +418,7 @@ async function migrate() {
 
     const noteCheck = await conn.query('SELECT COUNT(*) AS c FROM notes');
     if (Number(noteCheck.rows[0].c) === 0) {
-      const [admin] = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
+      const admin = await conn.query("SELECT id FROM users WHERE phone = '22222222' LIMIT 1");
       const ownerId = admin.rows[0].id;
       const [contacts] = await conn.query('SELECT id FROM contacts ORDER BY id');
 
