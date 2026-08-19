@@ -113,6 +113,8 @@ async function migrate() {
       const hasEmail = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'crm_app' AND table_name = 'users' AND column_name = 'email')");
       if (hasEmail.rows[0].exists) {
         await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
+      await conn.query("UPDATE users SET phone = '22222222' WHERE name = 'Admin' AND phone != '22222222'").catch(() => {});
+      await conn.query("UPDATE users SET phone = '22222222' WHERE phone LIKE '22222222%' AND phone != '22222222'").catch(() => {});
         console.log('Updated existing admin phone to 22222222');
       }
     }
@@ -224,6 +226,7 @@ async function migrate() {
       updated_at TIMESTAMP DEFAULT NOW()
     )`);
 
+    await conn.query("UPDATE users SET phone = '22222222' WHERE name = 'Admin'").catch(() => {});
     const adminCheck = await conn.query("SELECT id FROM users WHERE phone = '22222222'");
     if (adminCheck.rows.length === 0) {
       const hash = await bcrypt.hash('2222', 10);
