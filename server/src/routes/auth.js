@@ -29,9 +29,11 @@ router.get('/me', async (req, res) => {
     if (!authHeader) return res.status(401).json({ error: 'No token' });
     const jwt = await import('jsonwebtoken');
     const decoded = jwt.default.verify(authHeader.split(' ')[1], process.env.JWT_SECRET || 'crm-secret-key-2026');
-    const [users] = await query('SELECT id, name, phone, role, avatar_color FROM users WHERE id = ?', [decoded.id]);
+    const [users] = await query("SELECT id, name, phone, role, avatar_color, permissions FROM users WHERE id = ?", [decoded.id]);
     if (users.length === 0) return res.status(404).json({ error: 'User not found' });
-    res.json(users[0]);
+    const u = users[0];
+    u.permissions = typeof u.permissions === 'string' ? JSON.parse(u.permissions) : u.permissions || { dashboard: true, contacts: true, companies: true, pipeline: true, activities: true, settings: true };
+    res.json(u);
   } catch {
     res.status(401).json({ error: 'Invalid token' });
   }

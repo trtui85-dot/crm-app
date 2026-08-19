@@ -105,5 +105,18 @@
   "prospect": "فرصة",
   "customer": "عميل",
   "owner_label": "المالك",
-  "confirm_delete": "تأكيد الحذف؟"
+  "confirm_delete": "تأكيد الحذف؟",
+  "users_management": "إدارة المستخدمين",
+  "users": "المستخدمون",
+  "user": "مستخدم",
+  "admin": "مدير",
+  "manager": "مدير قسم",
+  "add_user": "إضافة مستخدم",
+  "edit_user": "تعديل المستخدم",
+  "new_pin_optional": "رمز جديد (اختياري)",
+  "page_access": "صلاحية الصفحات",
+  "none": "لا شيء",
+  "activate": "تفعيل",
+  "deactivate": "تعطيل",
+  "access_denied": "الوصول مرفوض"
 }

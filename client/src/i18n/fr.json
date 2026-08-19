@@ -105,5 +105,18 @@
   "prospect": "Prospect",
   "customer": "Client",
   "owner_label": "Propriétaire",
-  "confirm_delete": "Confirmer la suppression ?"
+  "confirm_delete": "Confirmer la suppression ?",
+  "users_management": "Gestion des utilisateurs",
+  "users": "Utilisateurs",
+  "user": "Utilisateur",
+  "admin": "Administrateur",
+  "manager": "Manager",
+  "add_user": "Ajouter un utilisateur",
+  "edit_user": "Modifier l'utilisateur",
+  "new_pin_optional": "Nouveau PIN (optionnel)",
+  "page_access": "Accès aux pages",
+  "none": "Aucun",
+  "activate": "Activer",
+  "deactivate": "Désactiver",
+  "access_denied": "Accès refusé"
 }

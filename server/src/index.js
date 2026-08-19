@@ -13,6 +13,7 @@ import dealRoutes from './routes/deals.js';
 import activityRoutes from './routes/activities.js';
 import tagRoutes from './routes/tags.js';
 import dashboardRoutes from './routes/dashboard.js';
+import userRoutes from './routes/users.js';
 
 const app = express();
 const PORT = process.env.PORT || 4002;
@@ -27,6 +28,7 @@ app.use('/api/deals', authenticate, dealRoutes);
 app.use('/api/activities', authenticate, activityRoutes);
 app.use('/api/tags', authenticate, tagRoutes);
 app.use('/api/dashboard', authenticate, dashboardRoutes);
+app.use('/api/users', authenticate, userRoutes);
 
 const clientDist = path.resolve(__dirname, '../../client/dist');
 app.use(express.static(clientDist));

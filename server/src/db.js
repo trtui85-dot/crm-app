@@ -114,6 +114,11 @@ async function migrate() {
         await conn.query("ALTER TABLE users DROP COLUMN email CASCADE").catch(() => {});
         console.log('Dropped email column');
       }
+      const hasPerms = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'crm_app' AND table_name = 'users' AND column_name = 'permissions')");
+      if (!hasPerms.rows[0].exists) {
+        await conn.query("ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT '{\"dashboard\":true,\"contacts\":true,\"companies\":true,\"pipeline\":true,\"activities\":true,\"settings\":true}'");
+        console.log('Added permissions column');
+      }
     }
 
     await conn.query("UPDATE users SET active = 1 WHERE active IS NOT DISTINCT FROM true").catch(() => {});
