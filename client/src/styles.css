@@ -436,36 +436,37 @@ a:hover { color: var(--primary-dark); }
 /* ==============================
    ACTIVITIES
 ============================== */
-.activities-list { display: flex; flex-direction: column; gap: 8px; }
-.activity-item {
-  display: flex; align-items: flex-start; gap: 14px;
-  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 18px; box-shadow: var(--shadow-xs); transition: all 0.2s;
-  animation: fadeInUp 0.3s ease both;
+.activities-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
 }
-.activity-item:hover { border-color: var(--primary-light); box-shadow: var(--shadow-sm); }
-.activity-item.done { opacity: 0.5; }
-.activity-item.overdue { border-color: #fecaca; background: #fffbeb; }
-.activity-check {
+.activity-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; box-shadow: var(--shadow-xs); transition: all 0.2s;
+  animation: fadeInUp 0.3s ease both; display: flex; flex-direction: column; gap: 10px;
+}
+.activity-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+.activity-card.done { opacity: 0.5; }
+.activity-card.overdue { border-color: #fecaca; background: #fffbeb; }
+.activity-card-header { display: flex; align-items: center; justify-content: space-between; }
+.activity-card-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.activity-card-check {
   width: 26px; height: 26px; border-radius: 50%;
   border: 2px solid var(--border); background: #fff;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: #fff; flex-shrink: 0; transition: all 0.2s; margin-top: 2px;
+  font-size: 12px; color: #fff; transition: all 0.2s;
 }
-.activity-check:hover { border-color: var(--success); background: var(--success); }
-.activity-item.done .activity-check { background: var(--success); border-color: var(--success); }
-.activity-icon {
-  width: 42px; height: 42px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.activity-info { flex: 1; min-width: 0; }
-.activity-subject { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-.activity-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.activity-contact, .activity-deal { font-size: 12px; color: var(--text-secondary); }
-.activity-desc { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
-.activity-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.activity-date { font-size: 12px; color: var(--text-muted); white-space: nowrap; font-weight: 500; }
-.activity-date.overdue { color: var(--danger); font-weight: 700; }
+.activity-card-check:hover { border-color: var(--success); background: var(--success); }
+.activity-card-check.checked { background: var(--success); border-color: var(--success); }
+.activity-card-subject { font-weight: 700; font-size: 15px; }
+.activity-card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+.activity-card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--text-secondary); }
+.activity-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border); }
+.activity-card-date { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.activity-card-date.overdue { color: var(--danger); font-weight: 700; }
 
 /* ==============================
    DETAIL PAGE
@@ -849,7 +850,8 @@ a:hover { color: var(--primary-dark); }
   .pipeline-card-prob { font-size: 8px; }
 
   /* Activities */
-  .activities-list { gap: 3px; }
+  .activities-grid { grid-template-columns: 1fr; gap: 6px; }
+  .activity-card { padding: 8px; gap: 6px; border-radius: 8px; }
   .activity-item { padding: 6px; gap: 6px; border-radius: 5px; }
   .activity-check { width: 18px; height: 18px; border-width: 1.5px; }
   .activity-icon { width: 22px; height: 22px; border-radius: 5px; }

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { get, post, put, del } from '../api.js';
 import { useToast } from '../components/toast.jsx';
 import { useConfirm } from '../components/confirm.jsx';
-import { Modal, Input, Select, Textarea, Badge, Spinner, EmptyState, SearchInput, TabBar } from '../components/ui.jsx';
-import { Plus, GitBranch, DollarSign, GripVertical } from 'lucide-react';
+import { Modal, Input, Select, Textarea, Badge, Spinner, EmptyState, SearchInput } from '../components/ui.jsx';
+import { Plus } from 'lucide-react';
 
 export default function Pipeline() {
   const { t } = useTranslation();
@@ -15,7 +15,6 @@ export default function Pipeline() {
   const [contacts, setContacts] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('kanban');
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -67,7 +66,6 @@ export default function Pipeline() {
   const onDrop = (e, stageId) => { e.preventDefault(); if (dragging) { moveToStage(dragging, stageId); setDragging(null); } };
 
   const fmt = (v) => new Intl.NumberFormat('fr-MR').format(v || 0);
-  const getColor = (s) => s.win_status ? '#22c55e' : s.loss_status ? '#ef4444' : '#6366f1';
 
   if (loading) return <Spinner />;
 
@@ -78,78 +76,46 @@ export default function Pipeline() {
           <h1>{t('pipeline')}</h1>
           <p className="page-subtitle">{deals.length} deals · {fmt(deals.filter(d => !stages.find(s => s.id === d.stage_id)?.win_status && !stages.find(s => s.id === d.stage_id)?.loss_status).reduce((a, d) => a + Number(d.expected_revenue), 0))} MRU</p>
         </div>
-        <div className="header-actions">
-          <TabBar tabs={[{ value: 'kanban', label: t('kanban') }, { value: 'list', label: t('list') }]} active={view} onChange={setView} />
-          <button className="btn btn-primary" onClick={() => openNew()}><Plus size={18} /> {t('new_deal')}</button>
-        </div>
+        <button className="btn btn-primary" onClick={() => openNew()}><Plus size={18} /> {t('new_deal')}</button>
       </div>
 
       <div className="page-filters">
         <SearchInput value={search} onChange={setSearch} placeholder={t('search') + '...'} />
       </div>
 
-      {view === 'kanban' ? (
-        <div className="pipeline-board">
-          {stages.map(stage => {
-            const stageDeals = deals.filter(d => d.stage_id === stage.id);
-            const total = stageDeals.reduce((a, d) => a + Number(d.expected_revenue), 0);
-            return (
-              <div key={stage.id} className="pipeline-column" onDragOver={onDragOver} onDrop={e => onDrop(e, stage.id)}>
-                <div className="pipeline-column-header">
-                  <Badge color={stage.color} dot>{stage.name}</Badge>
-                  <span className="pipeline-col-count">{stageDeals.length} · {fmt(total)} MRU</span>
-                </div>
-                <div className="pipeline-column-body">
-                  {stageDeals.map(deal => (
-                    <div key={deal.id} className={`pipeline-card ${dragging === deal.id ? 'dragging' : ''}`}
-                      draggable onDragStart={e => onDragStart(e, deal.id)} onClick={() => openEdit(deal)}>
-                      <div className="pipeline-card-title">{deal.title}</div>
-                      <div className="pipeline-card-contact">{deal.contact_name || '—'}</div>
-                      <div className="pipeline-card-footer">
-                        <span className="pipeline-card-value">{fmt(deal.expected_revenue)} MRU</span>
-                        <span className="pipeline-card-prob">{deal.probability}%</span>
-                      </div>
-                      {deal.close_date && (
-                        <div className="pipeline-card-date">
-                          {new Date(deal.close_date).toLocaleDateString('fr')}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {stageDeals.length === 0 && <div className="pipeline-empty">Glisser un deal ici</div>}
-                </div>
+      <div className="pipeline-board">
+        {stages.map(stage => {
+          const stageDeals = deals.filter(d => d.stage_id === stage.id);
+          const total = stageDeals.reduce((a, d) => a + Number(d.expected_revenue), 0);
+          return (
+            <div key={stage.id} className="pipeline-column" onDragOver={onDragOver} onDrop={e => onDrop(e, stage.id)}>
+              <div className="pipeline-column-header">
+                <Badge color={stage.color} dot>{stage.name}</Badge>
+                <span className="pipeline-col-count">{stageDeals.length} · {fmt(total)} MRU</span>
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="deals-table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>{t('deal')}</th>
-                <th>{t('contact')}</th>
-                <th>{t('stage')}</th>
-                <th>{t('expected_revenue')}</th>
-                <th>{t('probability')}</th>
-                <th>{t('close_date')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deals.map(d => (
-                <tr key={d.id} onClick={() => openEdit(d)} className="clickable-row">
-                  <td className="font-medium">{d.title}</td>
-                  <td>{d.contact_name || '—'}</td>
-                  <td><Badge color={stages.find(s => s.id === d.stage_id)?.color}>{d.stage_name}</Badge></td>
-                  <td>{fmt(d.expected_revenue)} MRU</td>
-                  <td>{d.probability}%</td>
-                  <td>{d.close_date ? new Date(d.close_date).toLocaleDateString('fr') : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              <div className="pipeline-column-body">
+                {stageDeals.map(deal => (
+                  <div key={deal.id} className={`pipeline-card ${dragging === deal.id ? 'dragging' : ''}`}
+                    draggable onDragStart={e => onDragStart(e, deal.id)} onClick={() => openEdit(deal)}>
+                    <div className="pipeline-card-title">{deal.title}</div>
+                    <div className="pipeline-card-contact">{deal.contact_name || '—'}</div>
+                    <div className="pipeline-card-footer">
+                      <span className="pipeline-card-value">{fmt(deal.expected_revenue)} MRU</span>
+                      <span className="pipeline-card-prob">{deal.probability}%</span>
+                    </div>
+                    {deal.close_date && (
+                      <div className="pipeline-card-date">
+                        {new Date(deal.close_date).toLocaleDateString('fr')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {stageDeals.length === 0 && <div className="pipeline-empty">Glisser un deal ici</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t('edit') : t('new_deal')} size="lg">
         <div className="form-grid">

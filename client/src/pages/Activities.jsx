@@ -85,28 +85,28 @@ export default function Activities() {
       {loading ? <Spinner /> : activities.length === 0 ? (
         <EmptyState icon={CalendarCheck} title={t('no_results')} />
       ) : (
-        <div className="activities-list">
+        <div className="activities-grid">
           {activities.map(a => {
             const Icon = typeIcons[a.type] || CheckSquare;
             return (
-              <div key={a.id} className={`activity-item ${a.completed ? 'done' : ''} ${isOverdue(a) ? 'overdue' : ''}`}>
-                <button className="activity-check" onClick={() => toggleDone(a)}>
-                  {a.completed ? '✓' : ''}
-                </button>
-                <div className="activity-icon" style={{ background: typeColors[a.type] + '18', color: typeColors[a.type] }}>
-                  <Icon size={18} />
-                </div>
-                <div className="activity-info">
-                  <div className="activity-subject">{a.subject}</div>
-                  <div className="activity-meta">
-                    <Badge color={typeColors[a.type]}>{t(a.type)}</Badge>
-                    {a.contact_name && <span className="activity-contact">{a.contact_name}</span>}
-                    {a.deal_title && <span className="activity-deal">{a.deal_title}</span>}
+              <div key={a.id} className={`activity-card ${a.completed ? 'done' : ''} ${isOverdue(a) ? 'overdue' : ''}`}>
+                <div className="activity-card-header">
+                  <div className="activity-card-icon" style={{ background: typeColors[a.type] + '18', color: typeColors[a.type] }}>
+                    <Icon size={20} />
                   </div>
-                  {a.description && <p className="activity-desc">{a.description}</p>}
+                  <button className={`activity-card-check ${a.completed ? 'checked' : ''}`} onClick={() => toggleDone(a)}>
+                    {a.completed ? '✓' : ''}
+                  </button>
                 </div>
-                <div className="activity-right">
-                  <span className={`activity-date ${isOverdue(a) ? 'overdue' : ''}`}>
+                <div className="activity-card-subject">{a.subject}</div>
+                {a.description && <p className="activity-card-desc">{a.description}</p>}
+                <div className="activity-card-meta">
+                  <Badge color={typeColors[a.type]}>{t(a.type)}</Badge>
+                  {a.contact_name && <span>{a.contact_name}</span>}
+                  {a.deal_title && <span>{a.deal_title}</span>}
+                </div>
+                <div className="activity-card-footer">
+                  <span className={`activity-card-date ${isOverdue(a) ? 'overdue' : ''}`}>
                     {a.due_date ? new Date(a.due_date).toLocaleDateString('fr', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}
                   </span>
                   <button className="icon-btn-sm" onClick={() => handleDelete(a.id)} title={t('delete')}>×</button>
