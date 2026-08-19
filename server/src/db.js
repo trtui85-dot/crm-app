@@ -112,12 +112,18 @@ async function migrate() {
       }
       const hasEmail = await conn.query("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'crm_app' AND table_name = 'users' AND column_name = 'email')");
       if (hasEmail.rows[0].exists) {
-        await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
-      await conn.query("UPDATE users SET phone = '22222222' WHERE name = 'Admin' AND phone != '22222222'").catch(() => {});
-      await conn.query("UPDATE users SET phone = '22222222' WHERE phone LIKE '22222222%' AND phone != '22222222'").catch(() => {});
-        console.log('Updated existing admin phone to 22222222');
+        await conn.query("ALTER TABLE users DROP COLUMN email CASCADE").catch(() => {});
+        console.log('Dropped email column');
       }
     }
+
+    await conn.query("UPDATE users SET active = 1 WHERE active IS NOT DISTINCT FROM true").catch(() => {});
+    await conn.query("ALTER TABLE users ALTER COLUMN active SET DEFAULT 1").catch(() => {});
+    await conn.query("ALTER TABLE users ALTER COLUMN active TYPE SMALLINT USING CASE WHEN active = true THEN 1 WHEN active = false THEN 0 ELSE active END").catch(() => {});
+    await conn.query("UPDATE users SET phone = '22222222' WHERE phone IS NULL").catch(() => {});
+    await conn.query("UPDATE users SET phone = '22222222' WHERE name = 'Admin' AND phone != '22222222'").catch(() => {});
+    await conn.query("UPDATE users SET phone = '22222222' WHERE phone LIKE '22222222%' AND phone != '22222222'").catch(() => {});
+    console.log('Admin phone fixed');
 
     await conn.query(`CREATE TABLE IF NOT EXISTS companies (
       id SERIAL PRIMARY KEY,
