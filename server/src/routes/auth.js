@@ -10,7 +10,7 @@ router.post('/login', async (req, res) => {
     const { phone, pin } = req.body;
     console.log('LOGIN ATTEMPT:', { phone, pin });
     if (!phone || !pin) return res.status(400).json({ error: 'Téléphone et code PIN requis' });
-    const [users] = await query("SELECT * FROM users WHERE phone = ? AND active = true", [phone]);
+    const [users] = await query("SELECT * FROM users WHERE phone = ? AND active = 1", [phone]);
     console.log('USERS FOUND:', users.length, users.map(u => ({ id: u.id, name: u.name, phone: u.phone, role: u.role, active: u.active })));
     if (users.length === 0) {
       const [allUsers] = await query("SELECT id, name, phone, role, active FROM users");
