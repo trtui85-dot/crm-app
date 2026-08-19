@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../auth.jsx';
-import { Lock, Mail, Globe } from 'lucide-react';
+import { Lock, Mail, Globe, Users, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -29,9 +29,15 @@ export default function Login() {
 
   return (
     <div className="login-page">
+      <div className="login-shapes">
+        <div className="login-shape shape-1" />
+        <div className="login-shape shape-2" />
+        <div className="login-shape shape-3" />
+      </div>
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">CRM</div>
+          <div className="login-logo-sub">SIR Solutions</div>
           <h1>{t('login_title')}</h1>
           <p>{t('login_subtitle')}</p>
         </div>
@@ -65,8 +71,8 @@ export default function Login() {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? t('loading') : t('login')}
+          <button type="submit" className="btn btn-primary btn-full btn-glow" disabled={loading}>
+            {loading ? t('loading') : t('login')} {!loading && <ArrowRight size={18} />}
           </button>
         </form>
         <button className="lang-toggle" onClick={toggleLang}>
